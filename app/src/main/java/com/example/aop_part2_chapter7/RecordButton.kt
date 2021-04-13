@@ -3,6 +3,7 @@ package com.example.aop_part2_chapter7
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.content.res.ResourcesCompat
 
 
 //TODO: Create CutstomView
@@ -14,16 +15,16 @@ class RecordButton(
     fun updateIconWithState(state : currentState) {
         when(state) {
             currentState.BEFORE_RECORDING -> {
-                setImageResource(R.drawable.ic_record)
+                background = ResourcesCompat.getDrawable(resources, R.drawable.ic_record, null)
             }
             currentState.ON_RECORDING -> {
-                setImageResource(R.drawable.ic_stop)
+                background = ResourcesCompat.getDrawable(resources, R.drawable.ic_stop, null)
             }
             currentState.AFTER_RECORDING -> {
-                setImageResource(R.drawable.ic_play)
+                background = ResourcesCompat.getDrawable(resources, R.drawable.ic_play, null)
             }
             currentState.ON_PLAYING -> {
-                setImageResource(R.drawable.ic_stop)
+                background = ResourcesCompat.getDrawable(resources, R.drawable.ic_stop, null)
             }
         }
     }

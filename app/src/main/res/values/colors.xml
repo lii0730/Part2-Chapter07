@@ -10,7 +10,7 @@
 
     <color name="before_record_color_Red">#F80333</color>
     <color name="on_record_color_blue">#00B0FF</color>
-    <color name="after_record_color_green">#00E676</color>
+    <color name="after_record_color_green">#036C39</color>
     <color name="on_playing_color_yellow">#FFEA00</color>
 
     <color name="audioRecordColor">#4F8DF6</color>

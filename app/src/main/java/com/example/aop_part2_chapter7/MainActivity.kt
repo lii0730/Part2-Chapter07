@@ -1,6 +1,5 @@
 package com.example.aop_part2_chapter7
 
-import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
@@ -12,19 +11,17 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.visualizer.amplitude.AudioRecordView
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-//    private val Reco : RecordButton by lazy {
-//        findViewById(R.id.Reco)
-//    }
+    private val customRecordButton: RecordButton by lazy {
+        findViewById(R.id.customRecordButton)
+    }
 
     private val audioRecordView: AudioRecordView by lazy {
         findViewById(R.id.audioRecordView)
@@ -34,32 +31,33 @@ class MainActivity : AppCompatActivity() {
         findViewById(R.id.timeTextView)
     }
 
-    private val recordButton: AppCompatButton by lazy {
-        findViewById(R.id.recordButton)
-    }
-
     private val resetButton: Button by lazy {
         findViewById(R.id.resetButton)
     }
 
     private var timer: CountUpTimer? = null
+    private var drawTimer: Timer? = null
 
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
-    private var filename: String = ""
+    private val filename: String by lazy {
+        "${externalCacheDir?.absolutePath}/recording.3gp"
+    }
 
     private var state = currentState.BEFORE_RECORDING
+        set(value) {
+            field = value
+            customRecordButton.updateIconWithState(value)
+        }
 
-    private val PERMISSIONS_REQUIRED_CODE = 100 // RECORD_AUDIO Permission 체크
-
-    private lateinit var drawTimer: Timer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        filename = "${externalCacheDir?.absolutePath}/recording.3gp"
-        getPermission()
+        state = currentState.BEFORE_RECORDING
+
+        requestPermission()
     }
 
 
@@ -69,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         //TODO: 녹음중 버튼 클릭 시 녹음 중지 및 reset 버튼 표시
         //TODO: 녹음된 내용 재생
 
-        if (view.id == R.id.recordButton) {
+        if (view.id == R.id.customRecordButton) {
             when (state) {
                 currentState.BEFORE_RECORDING -> {
                     startRecord()
@@ -101,8 +99,6 @@ class MainActivity : AppCompatActivity() {
         state = currentState.ON_RECORDING
 
         startVisualizing()
-        recordButton.background =
-            ResourcesCompat.getDrawable(resources, R.drawable.on_record_layout, null)
         Toast.makeText(this, "녹음 시작", Toast.LENGTH_SHORT).show()
     }
 
@@ -121,7 +117,6 @@ class MainActivity : AppCompatActivity() {
                     Log.i("AudioRecord", "prepare() Error" + e.toString())
                 }
             }
-
         return tmpRecorder
     }
 
@@ -136,10 +131,7 @@ class MainActivity : AppCompatActivity() {
 
         state = currentState.AFTER_RECORDING
         resetButton.isVisible = true
-
         stopVisualizing()
-        recordButton.background =
-            ResourcesCompat.getDrawable(resources, R.drawable.after_record_layout, null)
         Toast.makeText(this, "녹음 중지", Toast.LENGTH_SHORT).show()
     }
 
@@ -150,12 +142,9 @@ class MainActivity : AppCompatActivity() {
                 setDataSource(filename)
                 prepare()
             }
-
         player?.start()
 
         state = currentState.ON_PLAYING
-        recordButton.background =
-            ResourcesCompat.getDrawable(resources, R.drawable.on_playing_layout, null)
         Toast.makeText(this, "재생 시작", Toast.LENGTH_SHORT).show()
 
         player?.setOnCompletionListener {
@@ -170,9 +159,6 @@ class MainActivity : AppCompatActivity() {
 
         state = currentState.AFTER_RECORDING
         Toast.makeText(this, "재생 중지", Toast.LENGTH_SHORT).show()
-
-        recordButton.background =
-            ResourcesCompat.getDrawable(resources, R.drawable.after_record_layout, null)
     }
 
 
@@ -195,9 +181,6 @@ class MainActivity : AppCompatActivity() {
         resetTimer()
         timeTextView.text = "%02d:%02d".format(0, 0)
         state = currentState.BEFORE_RECORDING
-
-        recordButton.background =
-            ResourcesCompat.getDrawable(resources, R.drawable.before_record_layout, null)
         Toast.makeText(this, "초기화", Toast.LENGTH_SHORT).show()
     }
 
@@ -224,7 +207,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startVisualizing() {
         drawTimer = Timer()
-        drawTimer.schedule(object : TimerTask() {
+        drawTimer?.schedule(object : TimerTask() {
             override fun run() {
                 val currentMaxAmplitude = recorder?.maxAmplitude
                 audioRecordView.update(currentMaxAmplitude ?: 0)
@@ -233,10 +216,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun stopVisualizing() {
-        drawTimer.cancel()
+        drawTimer?.cancel()
+        drawTimer = null
     }
 
-    private fun getPermission() {
+    private fun requestPermission() {
         //TODO: Permission 요청
         val permissionCheck =
             ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO)
@@ -297,5 +281,9 @@ class MainActivity : AppCompatActivity() {
             }
             .create()
             .show()
+    }
+
+    companion object {
+        private const val PERMISSIONS_REQUIRED_CODE = 100 // RECORD_AUDIO Permission 체크
     }
 }
