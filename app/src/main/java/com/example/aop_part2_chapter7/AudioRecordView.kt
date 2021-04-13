@@ -19,7 +19,7 @@ class AudioRecordView(
     companion object {
         //TODO: 상수 정의
         private const val LINE_WIDTH = 10f
-        private const val LINE_SPACE = 15f
+        private const val LINE_SPACE = 15f // 선 사이의 간격
         private const val MAX_AMPLITUDE = Short.MAX_VALUE.toFloat()
         private const val ACTION_INTERVAL = 20L
     }
@@ -27,28 +27,31 @@ class AudioRecordView(
     //TODO: Nullable한 Int로 형변환
     private var onRequestCurrentAmplitude: (() -> Int)? = null
 
+    //TODO: Paint Create
     private val amplitudePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ResourcesCompat.getColor(resources, R.color.purple_500, null)
         strokeWidth = LINE_WIDTH
-        strokeCap = Paint.Cap.ROUND
+        strokeCap = Paint.Cap.ROUND //라인의 끝 지정?
     }
 
     private var drawingWidth: Int = 0
     private var drawingHeight: Int = 0
     private var drawingAmplitudes: List<Int> = emptyList()
-    private var isReplaying: Boolean = false
+    private var isReplaying: Boolean = false //재생 할 때
     private var replayingPosition: Int = 0
 
     private val visualizeRepeatAction: Runnable = object : Runnable {
         override fun run() {
             if (!isReplaying) {
                 val currentAmplitude = onRequestCurrentAmplitude?.invoke() ?: 0
+
+                //제일 나중에 들어온 amplitude를 가장 앞쪽에 배치
                 drawingAmplitudes = listOf(currentAmplitude) + drawingAmplitudes
             } else {
                 replayingPosition++
             }
 
-            invalidate()
+            invalidate() // onDraw 호출
 
             handler.postDelayed(this, ACTION_INTERVAL)
         }
@@ -63,10 +66,10 @@ class AudioRecordView(
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        canvas ?: return
+        canvas ?: return //null일 경우 return
 
         val centerY = drawingHeight / 2f
-        var offsetX = drawingWidth.toFloat()
+        var offsetX = drawingWidth.toFloat() //시작 포인트 가장 오른쪽 = 가로 길이
 
         drawingAmplitudes.let { amplitudes ->
             if (isReplaying) {
@@ -78,13 +81,13 @@ class AudioRecordView(
             .forEach { amplitude ->
                 val lineLength = amplitude / MAX_AMPLITUDE * drawingHeight * 0.8F
 
-                offsetX -= LINE_SPACE
-                if (offsetX < 0) return@forEach
+                offsetX -= LINE_SPACE // 오른쪽에서 왼쪽으로 그려진다
+                if (offsetX < 0) return@forEach // 왼쪽을 벗어난다면
 
                 canvas.drawLine(
                     offsetX,
                     centerY - lineLength / 2F,
-                    offsetX,
+                    offsetX, //위아래로만 그려지기 때문
                     centerY + lineLength / 2F,
                     amplitudePaint
                 )
