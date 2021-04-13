@@ -1,0 +1,17 @@
+<캔버스 사용방법> https://www.charlezz.com/?p=1433
+
+* Bitmap / View : 캔버스에 그려질 픽셀들을 관리
+* Canvas : 그리기 명령어를 수행하기 위함
+* 그리기 명령 : 캔버스에 무엇을 그릴 것인지를 나타냄
+* Paint : 그리기 명령을 어떻게 꾸밀것인지 묘사
+    -> Paint 객체는 onDraw()가 호출되기전에 초기화 되어야 함
+    -> onDraw()는 빠르게 많이 호출되는데 이 곳에서 Paint 객체를 초기화하면 리소스가 낭비된다.
+
+
+<캔버스 인스턴스에 접근>
+
+* View 클래스 확장
+* 코드로 캔버스를 만들고 캔버스 객체에 접근 {
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+}

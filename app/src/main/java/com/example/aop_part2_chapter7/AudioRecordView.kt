@@ -7,12 +7,17 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 
+//  TODO: CustomView를 직접 그리는 이유
+//        레이아웃을 직접 가져와서 작업을 하면 처리속도가 느림 -> 많은 수의 뷰를 추가하면 속도가 현저하게 느림
+//        속도 개선을 위한 목적도 있음
+
 class AudioRecordView(
     context: Context,
     attrs: AttributeSet
 ) : View(context, attrs) {
 
     companion object {
+        //TODO: 상수 정의
         private const val LINE_WIDTH = 10f
         private const val LINE_SPACE = 15f
         private const val MAX_AMPLITUDE = Short.MAX_VALUE.toFloat()
@@ -20,7 +25,7 @@ class AudioRecordView(
     }
 
     //TODO: Nullable한 Int로 형변환
-    var onRequestCurrentAmplitude: (() -> Int)? = null
+    private var onRequestCurrentAmplitude: (() -> Int)? = null
 
     private val amplitudePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ResourcesCompat.getColor(resources, R.color.purple_500, null)
@@ -65,7 +70,7 @@ class AudioRecordView(
 
         drawingAmplitudes.let { amplitudes ->
             if (isReplaying) {
-                amplitudes.takeLast(replayingPosition)
+                amplitudes.takeLast(replayingPosition) //replayPosition의 수만큼 뒤에서부터 가져옴
             } else {
                 amplitudes
             }
@@ -86,7 +91,7 @@ class AudioRecordView(
             }
     }
 
-    fun startVisualizing(isReplaying : Boolean) {
+    fun startVisualizing(isReplaying: Boolean) {
         this.isReplaying = isReplaying
         handler?.post(visualizeRepeatAction)
     }
@@ -96,7 +101,7 @@ class AudioRecordView(
         handler?.removeCallbacks(visualizeRepeatAction)
     }
 
-    fun clearVisualization () {
+    fun clearVisualization() {
         drawingAmplitudes = emptyList()
         invalidate()
     }
