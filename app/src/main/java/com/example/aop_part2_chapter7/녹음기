@@ -1,0 +1,18 @@
+<녹음기 만들기> Audio Streaming 활용?
+
+1. 마이크를 통해 음성을 녹음할 수 있다.
+
+2. 녹음한 음성을 재생해서 확인할 수 있다.
+
+3. 음성을 시각화해서 볼 수 있다.
+
+
+<활용 기술>
+
+- Request runtime Permissions (마이크 권한)
+- CustomView (음성 시각화)
+- MediaRecorder (마이크를 통해 녹음)
+
+
+AudioRecordView Usage
+- https://gevorgyanweb.medium.com/audiorecordview-or-simplest-and-best-audio-visualizer-for-android-4fcec59608
