@@ -22,9 +22,9 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val Reco : RecordButton by lazy {
-        findViewById(R.id.Reco)
-    }
+//    private val Reco : RecordButton by lazy {
+//        findViewById(R.id.Reco)
+//    }
 
     private val audioRecordView: AudioRecordView by lazy {
         findViewById(R.id.audioRecordView)
