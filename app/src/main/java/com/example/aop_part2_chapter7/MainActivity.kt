@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.visualizer.amplitude.AudioRecordView
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -35,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         findViewById(R.id.resetButton)
     }
 
-    private var timer: CountUpTimer? = null
+    private var CountTimer: CountUpTimer? = null
     private var drawTimer: Timer? = null
 
     private var recorder: MediaRecorder? = null
@@ -55,11 +54,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        state = currentState.BEFORE_RECORDING
-
+        initValue()
         requestPermission()
     }
 
+    private fun initValue() {
+        state = currentState.BEFORE_RECORDING
+
+        audioRecordView.onRequestCurrentAmplitude = {
+            recorder?.maxAmplitude ?: 0
+        }
+    }
 
     fun recordButtonClicked(view: View) {
         //TODO: 버튼 클릭시 녹음 시작
@@ -96,10 +101,11 @@ class MainActivity : AppCompatActivity() {
         //TODO: 경과 시간 표출 매 초마다 갱신
         updateTextView()
 
-        state = currentState.ON_RECORDING
+//        startVisualizing()
+        audioRecordView.startVisualizing(false)
 
-        startVisualizing()
         Toast.makeText(this, "녹음 시작", Toast.LENGTH_SHORT).show()
+        state = currentState.ON_RECORDING
     }
 
     private fun createMediaRecorder(): MediaRecorder {
@@ -127,11 +133,12 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         recorder = null
-        timer?.stop()
+        CountTimer?.stop()
 
-        state = currentState.AFTER_RECORDING
         resetButton.isVisible = true
-        stopVisualizing()
+//        stopVisualizing()
+        audioRecordView.stopVisualizing()
+        state = currentState.AFTER_RECORDING
         Toast.makeText(this, "녹음 중지", Toast.LENGTH_SHORT).show()
     }
 
@@ -144,13 +151,22 @@ class MainActivity : AppCompatActivity() {
             }
         player?.start()
 
-        state = currentState.ON_PLAYING
+        if(CountTimer != null){
+            resetCountTimer()
+        }
+
+        updateTextView()
+
+        audioRecordView.startVisualizing(true)
         Toast.makeText(this, "재생 시작", Toast.LENGTH_SHORT).show()
 
         player?.setOnCompletionListener {
             //TODO: 미디어 끝에 도달 했을 경우
             stopAudio()
+            CountTimer?.stop()
         }
+
+        state = currentState.ON_PLAYING
     }
 
     private fun stopAudio() {
@@ -158,6 +174,7 @@ class MainActivity : AppCompatActivity() {
         player = null
 
         state = currentState.AFTER_RECORDING
+        audioRecordView.stopVisualizing()
         Toast.makeText(this, "재생 중지", Toast.LENGTH_SHORT).show()
     }
 
@@ -168,17 +185,18 @@ class MainActivity : AppCompatActivity() {
 
         when (view.id) {
             R.id.resetButton -> {
-                resetRecord()
+                resetAll()
+                audioRecordView.clearVisualization()
             }
         }
     }
 
-    private fun resetRecord() {
+    private fun resetAll() {
         //TODO : 녹음내용 초기화
         stopAudio()
         resetButton.isVisible = false
 
-        resetTimer()
+        resetCountTimer()
         timeTextView.text = "%02d:%02d".format(0, 0)
         state = currentState.BEFORE_RECORDING
         Toast.makeText(this, "초기화", Toast.LENGTH_SHORT).show()
@@ -186,38 +204,34 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateTextView() {
         //TODO: 경과 시간 갱신
-        timer = object : CountUpTimer(1000L) {
+        CountTimer = object : CountUpTimer(1000L) {
             override fun onTick(elapsedTime: Long) {
                 val min = (elapsedTime / 1000) / 60
                 val sec = (elapsedTime / 1000) % 60
-
-                runOnUiThread {
-                    timeTextView.text = "%02d:%02d".format(min, sec)
-                }
+                timeTextView.text = "%02d:%02d".format(min, sec)
             }
         }
-        timer?.start()
+        CountTimer?.start()
     }
 
-    private fun resetTimer() {
-        timer?.reset()
-        timer = null
-        audioRecordView.recreate()
+    private fun resetCountTimer() {
+        CountTimer?.reset()
+        CountTimer = null
     }
 
     private fun startVisualizing() {
-        drawTimer = Timer()
-        drawTimer?.schedule(object : TimerTask() {
-            override fun run() {
-                val currentMaxAmplitude = recorder?.maxAmplitude
-                audioRecordView.update(currentMaxAmplitude ?: 0)
-            }
-        }, 0, 100)
+//        drawTimer = Timer()
+//        drawTimer?.schedule(object : TimerTask() {
+//            override fun run() {
+//                val currentMaxAmplitude = recorder?.maxAmplitude
+//                audioRecordView.update(currentMaxAmplitude ?: 0)
+//            }
+//        }, 0, 100)
     }
 
     private fun stopVisualizing() {
-        drawTimer?.cancel()
-        drawTimer = null
+//        drawTimer?.cancel()
+//        drawTimer = null
     }
 
     private fun requestPermission() {

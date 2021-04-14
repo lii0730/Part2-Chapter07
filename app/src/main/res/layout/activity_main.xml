@@ -7,23 +7,34 @@
     android:layout_margin="10dp"
     tools:context=".MainActivity">
 
-        <com.visualizer.amplitude.AudioRecordView
-            android:id="@+id/audioRecordView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/audio_recordview_layout"
-            app:chunkAlignTo="center"
-            app:chunkColor="@color/audioRecordColor"
-            app:chunkRoundedCorners="true"
-            app:chunkSoftTransition="true"
-            app:chunkSpace="1dp"
-            app:chunkWidth="2dp"
-            app:direction="leftToRight"
-            app:layout_constraintBottom_toTopOf="@+id/timeTextView"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+<!--    <com.visualizer.amplitude.AudioRecordView-->
+<!--        android:id="@+id/audioRecordView"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginBottom="20dp"-->
+<!--        android:background="@drawable/audio_recordview_layout"-->
+<!--        app:chunkAlignTo="center"-->
+<!--        app:chunkColor="@color/audioRecordColor"-->
+<!--        app:chunkRoundedCorners="true"-->
+<!--        app:chunkSoftTransition="true"-->
+<!--        app:chunkSpace="1dp"-->
+<!--        app:chunkWidth="2dp"-->
+<!--        app:direction="leftToRight"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/timeTextView"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <com.example.aop_part2_chapter7.AudioRecordView
+        android:id="@+id/audioRecordView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/audio_recordview_layout"
+        app:layout_constraintBottom_toTopOf="@+id/timeTextView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/timeTextView"
@@ -40,17 +51,17 @@
         app:layout_constraintTop_toBottomOf="@+id/audioRecordView" />
 
 
-<!--    <androidx.appcompat.widget.AppCompatButton-->
-<!--        android:id="@+id/recordButton"-->
-<!--        android:layout_width="60dp"-->
-<!--        android:layout_height="60dp"-->
-<!--        android:layout_marginBottom="20dp"-->
-<!--        android:background="@drawable/before_record_layout"-->
-<!--        android:onClick="recordButtonClicked"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintLeft_toLeftOf="parent"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/timeTextView" />-->
+    <!--    <androidx.appcompat.widget.AppCompatButton-->
+    <!--        android:id="@+id/recordButton"-->
+    <!--        android:layout_width="60dp"-->
+    <!--        android:layout_height="60dp"-->
+    <!--        android:layout_marginBottom="20dp"-->
+    <!--        android:background="@drawable/before_record_layout"-->
+    <!--        android:onClick="recordButtonClicked"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--        app:layout_constraintRight_toRightOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/timeTextView" />-->
 
     <com.example.aop_part2_chapter7.RecordButton
         android:id="@+id/customRecordButton"

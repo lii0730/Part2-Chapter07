@@ -18,16 +18,16 @@ class AudioRecordView(
 
     companion object {
         //TODO: 상수 정의
-        private const val LINE_WIDTH = 10f
-        private const val LINE_SPACE = 15f // 선 사이의 간격
-        private const val MAX_AMPLITUDE = Short.MAX_VALUE.toFloat()
-        private const val ACTION_INTERVAL = 20L
+        private const val LINE_WIDTH = 10f // 그려질 선의 두께
+        private const val LINE_SPACE = 15f // 그려질 선 사이의 간격
+        private const val MAX_AMPLITUDE = Short.MAX_VALUE.toFloat() // 그려질 선의 최대 높이
+        private const val ACTION_INTERVAL = 100L // Runnable 동작 간격
     }
 
     //TODO: Nullable한 Int로 형변환
-    private var onRequestCurrentAmplitude: (() -> Int)? = null
+    var onRequestCurrentAmplitude: (() -> Int)? = null
 
-    //TODO: Paint Create
+    //TODO: 선을 그릴 Paint 생성
     private val amplitudePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ResourcesCompat.getColor(resources, R.color.purple_500, null)
         strokeWidth = LINE_WIDTH
@@ -37,7 +37,7 @@ class AudioRecordView(
     private var drawingWidth: Int = 0
     private var drawingHeight: Int = 0
     private var drawingAmplitudes: List<Int> = emptyList()
-    private var isReplaying: Boolean = false //재생 할 때
+    private var isReplaying: Boolean = false // 재생 할 때 처음으로 돌아가서 재생
     private var replayingPosition: Int = 0
 
     private val visualizeRepeatAction: Runnable = object : Runnable {
@@ -78,20 +78,20 @@ class AudioRecordView(
                 amplitudes
             }
         }
-            .forEach { amplitude ->
-                val lineLength = amplitude / MAX_AMPLITUDE * drawingHeight * 0.8F
+        .forEach { amplitude ->
+            val lineLength = amplitude / MAX_AMPLITUDE * drawingHeight * 0.8F
 
-                offsetX -= LINE_SPACE // 오른쪽에서 왼쪽으로 그려진다
-                if (offsetX < 0) return@forEach // 왼쪽을 벗어난다면
+            offsetX -= LINE_SPACE // 오른쪽에서 왼쪽으로 그려진다
+            if (offsetX < 0) return@forEach // 왼쪽을 벗어난다면
 
-                canvas.drawLine(
-                    offsetX,
-                    centerY - lineLength / 2F,
-                    offsetX, //위아래로만 그려지기 때문
-                    centerY + lineLength / 2F,
-                    amplitudePaint
-                )
-            }
+            canvas.drawLine(
+                offsetX,
+                centerY - lineLength / 2F,
+                offsetX, //위아래로만 그려지기 때문
+                centerY + lineLength / 2F,
+                amplitudePaint
+            )
+        }
     }
 
     fun startVisualizing(isReplaying: Boolean) {

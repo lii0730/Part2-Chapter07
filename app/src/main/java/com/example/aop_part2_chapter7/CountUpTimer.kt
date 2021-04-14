@@ -7,19 +7,19 @@ import android.os.SystemClock
 
 
 abstract class CountUpTimer(val interval: Long) {
-    private var base: Long = 0
+    private var currentStampTime: Long = 0
 
     private val handler: Handler = object : Handler(Looper.myLooper()!!) {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
-            val elapsedTime = SystemClock.elapsedRealtime() - base
+            val elapsedTime = SystemClock.elapsedRealtime() - currentStampTime
             onTick(elapsedTime)
             sendMessageDelayed(obtainMessage(MSG), interval)
         }
     }
 
     fun start() {
-        base = SystemClock.elapsedRealtime()
+        currentStampTime = SystemClock.elapsedRealtime()
         handler.sendMessage(handler.obtainMessage(MSG))
     }
 
@@ -28,7 +28,7 @@ abstract class CountUpTimer(val interval: Long) {
     }
 
     fun reset() {
-        synchronized(this) { base = SystemClock.elapsedRealtime() }
+        synchronized(this) { currentStampTime = SystemClock.elapsedRealtime() }
     }
 
     abstract fun onTick(elapsedTime: Long)
