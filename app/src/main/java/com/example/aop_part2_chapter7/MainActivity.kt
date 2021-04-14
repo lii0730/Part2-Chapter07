@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var CountTimer: CountUpTimer? = null
-    private var drawTimer: Timer? = null
 
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
@@ -101,7 +100,6 @@ class MainActivity : AppCompatActivity() {
         //TODO: 경과 시간 표출 매 초마다 갱신
         updateTextView()
 
-//        startVisualizing()
         audioRecordView.startVisualizing(false)
 
         Toast.makeText(this, "녹음 시작", Toast.LENGTH_SHORT).show()
@@ -136,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         CountTimer?.stop()
 
         resetButton.isVisible = true
-//        stopVisualizing()
+
         audioRecordView.stopVisualizing()
         state = currentState.AFTER_RECORDING
         Toast.makeText(this, "녹음 중지", Toast.LENGTH_SHORT).show()
@@ -219,20 +217,6 @@ class MainActivity : AppCompatActivity() {
         CountTimer = null
     }
 
-    private fun startVisualizing() {
-//        drawTimer = Timer()
-//        drawTimer?.schedule(object : TimerTask() {
-//            override fun run() {
-//                val currentMaxAmplitude = recorder?.maxAmplitude
-//                audioRecordView.update(currentMaxAmplitude ?: 0)
-//            }
-//        }, 0, 100)
-    }
-
-    private fun stopVisualizing() {
-//        drawTimer?.cancel()
-//        drawTimer = null
-    }
 
     private fun requestPermission() {
         //TODO: Permission 요청
